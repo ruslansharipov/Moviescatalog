@@ -1,4 +1,4 @@
-package ru.sharipov.moviescatalog.ui
+package ru.sharipov.moviescatalog.ui.main_list.adapter
 
 import android.view.LayoutInflater
 import android.view.View

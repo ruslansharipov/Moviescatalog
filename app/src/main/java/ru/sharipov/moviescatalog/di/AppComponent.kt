@@ -1,8 +1,7 @@
 package ru.sharipov.moviescatalog.di
 
-import android.app.Application
 import dagger.Component
-import ru.sharipov.moviescatalog.ui.MainFragment
+import ru.sharipov.moviescatalog.ui.main_list.MainFragment
 
 @Component(
     modules = [

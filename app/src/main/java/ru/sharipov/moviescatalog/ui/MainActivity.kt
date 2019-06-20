@@ -3,6 +3,7 @@ package ru.sharipov.moviescatalog.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import ru.sharipov.moviescatalog.R
+import ru.sharipov.moviescatalog.ui.main_list.MainFragment
 
 class MainActivity : AppCompatActivity() {
 

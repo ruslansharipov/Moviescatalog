@@ -1,6 +1,7 @@
-package ru.sharipov.moviescatalog.ui
+package ru.sharipov.moviescatalog.ui.main_list
 
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +15,14 @@ import moxy.presenter.ProvidePresenter
 import ru.sharipov.moviescatalog.R
 import ru.sharipov.moviescatalog.app.MoviesApp
 import ru.sharipov.moviescatalog.domain.MovieItem
+import ru.sharipov.moviescatalog.ui.hide
+import ru.sharipov.moviescatalog.ui.main_list.adapter.MoviesAdapter
+import ru.sharipov.moviescatalog.ui.main_list.adapter.SimpleDecoration
+import ru.sharipov.moviescatalog.ui.show
 import javax.inject.Inject
 
 class MainFragment : MvpAppCompatFragment(), MainView {
+
     @Inject
     lateinit var daggerPresenter: Lazy<MainFragmentPresenter>
 
@@ -42,10 +48,12 @@ class MainFragment : MvpAppCompatFragment(), MainView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(view) {
+        val decoration = SimpleDecoration(context.resources.displayMetrics.densityDpi)
         moviesAdapter.favouritesListener = presenter::onFavouriteClick
         movies_rv.run {
             adapter = moviesAdapter
             layoutManager = LinearLayoutManager(context)
+            addItemDecoration(decoration)
         }
     }
 

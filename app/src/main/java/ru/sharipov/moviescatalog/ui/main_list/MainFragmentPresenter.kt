@@ -1,4 +1,4 @@
-package ru.sharipov.moviescatalog.ui
+package ru.sharipov.moviescatalog.ui.main_list
 
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

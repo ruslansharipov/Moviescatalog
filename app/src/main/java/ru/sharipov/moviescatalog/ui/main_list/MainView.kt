@@ -1,4 +1,4 @@
-package ru.sharipov.moviescatalog.ui
+package ru.sharipov.moviescatalog.ui.main_list
 
 import moxy.MvpView
 import ru.sharipov.moviescatalog.domain.MovieItem
