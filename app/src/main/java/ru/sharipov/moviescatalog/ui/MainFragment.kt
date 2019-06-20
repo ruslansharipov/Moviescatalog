@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.Lazy
+import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.fragment_main.view.*
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -23,6 +26,8 @@ class MainFragment : MvpAppCompatFragment(), MainView {
     @ProvidePresenter
     fun providePresenter(): MainFragmentPresenter = daggerPresenter.get()
 
+    private val moviesAdapter = MoviesAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         (activity?.application as MoviesApp).appComponent.inject(this)
         super.onCreate(savedInstanceState)
@@ -36,9 +41,22 @@ class MainFragment : MvpAppCompatFragment(), MainView {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
-    override fun showMovies(movies: List<MovieItem>) {
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(view) {
+        movies_rv.run {
+            adapter = moviesAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
+    override fun showMovies(movies: List<MovieItem>) {
+        moviesAdapter.movies = movies
+    }
 
+    override fun showListProgress() = list_pb.show()
+
+    override fun hideListProgress() = list_pb.hide()
+
+    override fun showSearchProgress() = search_pb.show()
+
+    override fun hideSearchProgress() = search_pb.hide()
 }

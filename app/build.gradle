@@ -71,4 +71,7 @@ dependencies {
     implementation "com.github.moxy-community:moxy:$moxyVersion"
     implementation "com.github.moxy-community:moxy-androidx:$moxyVersion"
     implementation "com.github.moxy-community:moxy-material:$moxyVersion"
+
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
 }
