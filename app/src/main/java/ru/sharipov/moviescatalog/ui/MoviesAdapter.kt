@@ -18,6 +18,8 @@ class MoviesAdapter : RecyclerView.Adapter<MoviesAdapter.Holder>() {
             notifyDataSetChanged()
         }
 
+    var favouritesListener: ((Int, Boolean) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_main_list_item, parent, false)
         return Holder(view)
@@ -32,9 +34,20 @@ class MoviesAdapter : RecyclerView.Adapter<MoviesAdapter.Holder>() {
         overview_tv.text = item.overview
         premiere_tv.text = item.releaseDate
 
+        favourite_cb.isChecked = item.isFavourite
+
+        favourite_cb.setOnCheckedChangeListener { _, isChecked ->
+            item.isFavourite = isChecked
+            favouritesListener?.invoke(item.id, isChecked)
+        }
+
         Picasso.get()
             .load(item.image)
             .into(poster_iv)
+    }
+
+    override fun onViewRecycled(holder: Holder) = with(holder.itemView) {
+        favourite_cb.setOnCheckedChangeListener(null)
     }
 
     inner class Holder(view: View) : RecyclerView.ViewHolder(view)

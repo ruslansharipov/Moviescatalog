@@ -42,6 +42,7 @@ class MainFragment : MvpAppCompatFragment(), MainView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(view) {
+        moviesAdapter.favouritesListener = presenter::onFavouriteClick
         movies_rv.run {
             adapter = moviesAdapter
             layoutManager = LinearLayoutManager(context)

@@ -10,11 +10,13 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import ru.sharipov.moviescatalog.domain.MovieItem
 import ru.sharipov.moviescatalog.interaction.MoviesRepository
+import ru.sharipov.moviescatalog.interaction.favourites.FavesRepository
 import ru.sharipov.moviescatalog.interaction.response.Movie
 
 @InjectViewState
 class MainFragmentPresenter(
-    private val repository: MoviesRepository
+    private val moviesRepository: MoviesRepository,
+    private val favesRepository: FavesRepository
 ) : MvpPresenter<MainView>() {
 
     companion object {
@@ -31,19 +33,20 @@ class MainFragmentPresenter(
 
     private fun fetchMovieList() {
         viewState.showListProgress()
-        compositeDisposable += repository.getMovies()
+        compositeDisposable += moviesRepository.getMovies()
             .flattenAsObservable { it }
             .map { movie: Movie ->
                 val date = LocalDate.parse(movie.releaseDate, dateParser)
                 val releaseDate = date.format(dateFormatter)
                 val imageUrl = "$IMAGE_PREFIX${movie.posterPath}"
+                val isFavourite = favesRepository.isFavourite(movie.id)
                 MovieItem(
                     movie.id,
                     imageUrl,
                     movie.title,
                     movie.overview,
                     releaseDate,
-                    false
+                    isFavourite
                 )
             }.toList()
             .subscribeOn(Schedulers.io())
@@ -67,5 +70,8 @@ class MainFragmentPresenter(
         viewState.hideSearchProgress()
     }
 
-
+    fun onFavouriteClick(id: Int, isChecked: Boolean) = when (isChecked){
+        true -> favesRepository.saveId(id)
+        false -> favesRepository.removeId(id)
+    }
 }

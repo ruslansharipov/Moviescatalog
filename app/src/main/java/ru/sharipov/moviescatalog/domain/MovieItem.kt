@@ -6,5 +6,5 @@ data class MovieItem(
     val title: String,
     val overview: String,
     val releaseDate: String,
-    val isFavourite: Boolean
+    var isFavourite: Boolean
 )

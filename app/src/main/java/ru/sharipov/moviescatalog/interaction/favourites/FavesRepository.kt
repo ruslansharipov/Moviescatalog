@@ -1,7 +1,6 @@
 package ru.sharipov.moviescatalog.interaction.favourites
 
 import android.content.SharedPreferences
-import androidx.core.content.edit
 
 class FavesRepository(
     private val sharedPreferences: SharedPreferences
@@ -11,23 +10,28 @@ class FavesRepository(
         private const val FAVOURITES = "FAVOURITES"
     }
 
+    private val favourites: MutableSet<Int> = sharedPreferences.getStringSet(FAVOURITES, mutableSetOf())!!
+        .map { it.toInt() }
+        .toMutableSet()
+
     fun saveId(id: Int) {
-        val newSet = getSet()
-        newSet.add(id)
-        saveSet(newSet)
+        favourites.add(id)
+        saveSet(favourites)
     }
 
     fun removeId(id: Int) {
-
-    }
-
-    private fun getSet(): MutableSet<Int> {
-        val stringSet = sharedPreferences.getStringSet(FAVOURITES, mutableSetOf())!!
-        return stringSet.map { it.toInt() }
-            .toMutableSet()
+        favourites.remove(id)
+        saveSet(favourites)
     }
 
     private fun saveSet(ids: Set<Int>) {
+        val set = ids.map { it.toString() }.toSet()
+        sharedPreferences.edit()
+            .putStringSet(FAVOURITES, set)
+            .apply()
+    }
 
+    fun isFavourite(id: Int): Boolean {
+        return favourites.contains(id)
     }
 }
