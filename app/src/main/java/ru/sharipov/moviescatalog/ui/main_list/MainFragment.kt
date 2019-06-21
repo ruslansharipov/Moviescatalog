@@ -48,7 +48,10 @@ class MainFragment : MvpAppCompatFragment(), MainView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(view) {
-        val decoration = SimpleDecoration(context.resources.displayMetrics.densityDpi)
+        val inner = resources.getDimensionPixelSize(R.dimen.fragment_main_padding_inner)
+        val small = resources.getDimensionPixelSize(R.dimen.fragment_main_padding_small)
+        val big = resources.getDimensionPixelSize(R.dimen.fragment_main_padding_big)
+        val decoration = SimpleDecoration(small, inner, big)
         moviesAdapter.favouritesListener = presenter::onFavouriteClick
         movies_rv.run {
             adapter = moviesAdapter

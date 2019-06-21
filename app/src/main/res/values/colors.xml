@@ -6,4 +6,5 @@
 
     <color name="colorWhite">#fafafa</color>
     <color name="listItemtextColor">#de000000</color>
+    <color name="colorTextHint">#61000000</color>
 </resources>

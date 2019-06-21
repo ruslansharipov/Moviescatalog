@@ -24,7 +24,7 @@
         android:layout_toEndOf="@id/poster_iv"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
-        android:lineHeight="22sp"
+        android:lineHeight="28sp"
         android:maxLines="2"
         android:textColor="@color/listItemtextColor"
         android:textSize="22sp"
@@ -41,8 +41,12 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="12dp"
         android:layout_toEndOf="@id/poster_iv"
+        android:fontFamily="sans-serif"
         android:lineHeight="20sp"
+        android:lineSpacingExtra="6dp"
         android:maxLines="3"
+        android:textSize="14sp"
+        android:textStyle="normal"
         tools:text="Отставной детектив Рик Декард вновь восстановлен в полиции Лос-Анджелеса для поиска возглавляемой Роем Батти группы киборгов, совершившей побег из космической колонии на Землю." />
 
     <TextView
@@ -57,7 +61,10 @@
         android:layout_toEndOf="@id/poster_iv"
         android:drawableStart="@drawable/ic_calendar"
         android:drawablePadding="2dp"
+        android:fontFamily="sans-serif"
         android:gravity="center_vertical"
+        android:textSize="14sp"
+        android:textStyle="normal"
         tools:text="1 января 2017" />
 
     <CheckBox

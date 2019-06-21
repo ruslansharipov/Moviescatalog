@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="list_tem_corner_radius">2dp</dimen>
+    <dimen name="fragment_main_padding_small">8dp</dimen>
+    <dimen name="fragment_main_padding_big">16dp</dimen>
+    <dimen name="fragment_main_padding_inner">4dp</dimen>
 </resources>
