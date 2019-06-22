@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding3.widget.textChangeEvents
+import com.redmadrobot.lib.sd.base.State
 import com.redmadrobot.lib.sd.base.StateDelegate
 import dagger.Lazy
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,11 +20,9 @@ import moxy.presenter.ProvidePresenter
 import ru.sharipov.moviescatalog.R
 import ru.sharipov.moviescatalog.app.MoviesApp
 import ru.sharipov.moviescatalog.domain.MovieItem
-import ru.sharipov.moviescatalog.ui.hide
 import ru.sharipov.moviescatalog.ui.main_list.adapter.MoviesAdapter
 import ru.sharipov.moviescatalog.ui.main_list.adapter.SimpleDecoration
 import ru.sharipov.moviescatalog.ui.main_list.state.MovieState
-import ru.sharipov.moviescatalog.ui.show
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -41,6 +40,8 @@ class MainFragment : MvpAppCompatFragment(), MainView {
     private val uiCompositeDisposable = CompositeDisposable()
     private val moviesAdapter = MoviesAdapter()
 
+    private lateinit var stateDelegate: StateDelegate<MovieState>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         (activity?.application as MoviesApp).appComponent.inject(this)
         super.onCreate(savedInstanceState)
@@ -55,6 +56,14 @@ class MainFragment : MvpAppCompatFragment(), MainView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(view) {
+        stateDelegate = StateDelegate(
+            State(MovieState.LOADING_LIST, listOf(list_pb)),
+            State(MovieState.LOADING_SEARCH, listOf(search_pb)),
+            State(MovieState.EMPTY_LIST, listOf(empty_state_tv)),
+            State(MovieState.ERROR, listOf(error_state_tv, retry_fab)),
+            State(MovieState.LIST_LOADED, listOf(movies_rv))
+        )
+
         val inner = resources.getDimensionPixelSize(R.dimen.fragment_main_padding_inner)
         val small = resources.getDimensionPixelSize(R.dimen.fragment_main_padding_small)
         val big = resources.getDimensionPixelSize(R.dimen.fragment_main_padding_big)
@@ -87,52 +96,25 @@ class MainFragment : MvpAppCompatFragment(), MainView {
         super.onDestroy()
     }
 
-    override fun onListLoading(){
-        search_pb.hide()
-        movies_rv.hide()
-        retry_fab.hide()
-        empty_state_tv.hide()
-        error_state_tv.hide()
-        list_pb.show()
+    override fun onListLoading() {
+        stateDelegate.currentState = MovieState.LOADING_LIST
     }
 
-    override fun onSearchLoading(){
-        list_pb.hide()
-        movies_rv.hide()
-        retry_fab.hide()
-        empty_state_tv.hide()
-        error_state_tv.hide()
-        search_pb.show()
+    override fun onSearchLoading() {
+        stateDelegate.currentState = MovieState.LOADING_SEARCH
     }
 
-    override fun onEmptyList(){
-        list_pb.hide()
-        search_pb.hide()
-        movies_rv.hide()
-        retry_fab.hide()
-        error_state_tv.hide()
-        empty_state_tv.show()
+    override fun onEmptyList() {
+        stateDelegate.currentState = MovieState.EMPTY_LIST
         empty_state_tv.text = getString(R.string.empty_state_pattern, search_et.text.toString())
     }
 
-    override fun onError(){
-        list_pb.hide()
-        search_pb.hide()
-        movies_rv.hide()
-        empty_state_tv.hide()
-        error_state_tv.show()
-        retry_fab.show()
+    override fun onError() {
+        stateDelegate.currentState = MovieState.ERROR
     }
 
-    override fun onListLoaded(movies: List<MovieItem>){
+    override fun onListLoaded(movies: List<MovieItem>) {
         moviesAdapter.movies = movies
-
-        list_pb.hide()
-        search_pb.hide()
-        empty_state_tv.hide()
-        error_state_tv.hide()
-        retry_fab.hide()
-
-        movies_rv.show()
+        stateDelegate.currentState = MovieState.LIST_LOADED
     }
 }
