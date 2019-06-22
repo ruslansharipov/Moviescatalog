@@ -66,6 +66,7 @@ class MainFragment : MvpAppCompatFragment(), MainView {
 
         uiCompositeDisposable += search_et.textChangeEvents()
             .skipInitialValue()
+            .skip(1)
             .debounce(300, TimeUnit.MILLISECONDS)
             .map { it.text.toString() }
             .observeOn(AndroidSchedulers.mainThread())
