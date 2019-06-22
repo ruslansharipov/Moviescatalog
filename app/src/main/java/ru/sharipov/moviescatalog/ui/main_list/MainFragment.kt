@@ -1,12 +1,17 @@
 package ru.sharipov.moviescatalog.ui.main_list
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jakewharton.rxbinding3.widget.textChangeEvents
 import dagger.Lazy
+import io.reactivex.android.plugins.RxAndroidPlugins
+import io.reactivex.plugins.RxJavaPlugins.onError
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
 import moxy.MvpAppCompatFragment
@@ -19,6 +24,7 @@ import ru.sharipov.moviescatalog.ui.hide
 import ru.sharipov.moviescatalog.ui.main_list.adapter.MoviesAdapter
 import ru.sharipov.moviescatalog.ui.main_list.adapter.SimpleDecoration
 import ru.sharipov.moviescatalog.ui.show
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainFragment : MvpAppCompatFragment(), MainView {
@@ -58,6 +64,19 @@ class MainFragment : MvpAppCompatFragment(), MainView {
             layoutManager = LinearLayoutManager(context)
             addItemDecoration(decoration)
         }
+
+        search_et.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {}
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                presenter.onTextChanged(s.toString())
+            }
+
+        })
+
+        swipe_rl.setOnRefreshListener { presenter.onRefresh(search_et.text.toString()) }
     }
 
     override fun showMovies(movies: List<MovieItem>) {
@@ -71,4 +90,8 @@ class MainFragment : MvpAppCompatFragment(), MainView {
     override fun showSearchProgress() = search_pb.show()
 
     override fun hideSearchProgress() = search_pb.hide()
+
+    override fun hideSwipeRefresh() {
+        swipe_rl.isRefreshing = false
+    }
 }

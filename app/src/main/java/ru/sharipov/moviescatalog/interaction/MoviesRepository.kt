@@ -9,4 +9,9 @@ class MoviesRepository(private val moviesApi: MoviesApi) {
         return moviesApi.getMovies()
             .map { it.results }
     }
+
+    fun getSearchResult(query: String): Single<List<Movie>>{
+        return moviesApi.getSearchResult(query)
+            .map { it.results }
+    }
 }

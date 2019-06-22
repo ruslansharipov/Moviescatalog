@@ -23,21 +23,29 @@
         android:textColorHint="@color/colorTextHint"
         android:textSize="15sp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/movies_rv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/search_et"
-
-        tools:listitem="@layout/fragment_main_list_item" />
-
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/search_pb"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/search_et"
         android:visibility="gone"
         tools:visibility="visible" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_et">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/movies_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            tools:listitem="@layout/fragment_main_list_item" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/list_pb"

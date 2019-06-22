@@ -2,6 +2,8 @@ package ru.sharipov.moviescatalog.interaction.network
 
 import io.reactivex.Single
 import retrofit2.http.GET
+import retrofit2.http.Query
+import ru.sharipov.moviescatalog.interaction.response.Movie
 import ru.sharipov.moviescatalog.interaction.response.MovieResponse
 
 interface MoviesApi {
@@ -11,4 +13,7 @@ interface MoviesApi {
 
     @GET("discover/movie")
     fun getMovies(): Single<MovieResponse>
+
+    @GET("search/movie")
+    fun getSearchResult(@Query("query") query: String): Single<MovieResponse>
 }

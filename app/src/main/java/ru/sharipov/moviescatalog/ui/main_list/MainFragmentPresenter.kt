@@ -2,6 +2,7 @@ package ru.sharipov.moviescatalog.ui.main_list
 
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.BiConsumer
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
@@ -35,28 +36,26 @@ class MainFragmentPresenter(
         viewState.showListProgress()
         compositeDisposable += moviesRepository.getMovies()
             .flattenAsObservable { it }
-            .map { movie: Movie ->
-                val date = LocalDate.parse(movie.releaseDate, dateParser)
-                val releaseDate = date.format(dateFormatter)
-                val imageUrl = "$IMAGE_PREFIX${movie.posterPath}"
-                val isFavourite = favesRepository.isFavourite(movie.id)
-                MovieItem(
-                    movie.id,
-                    imageUrl,
-                    movie.title,
-                    movie.overview,
-                    releaseDate,
-                    isFavourite
-                )
-            }.toList()
+            .map { movie: Movie -> mapMovieToItem(movie) }
+            .toList()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { movies, error ->
-                when {
-                    error != null -> onError(error)
-                    else -> onSuccess(movies)
-                }
-            }
+            .subscribe(movieListSubscriber)
+    }
+
+    private fun mapMovieToItem(movie: Movie): MovieItem {
+        val date = LocalDate.parse(movie.releaseDate, dateParser)
+        val releaseDate = date.format(dateFormatter)
+        val imageUrl = "$IMAGE_PREFIX${movie.posterPath}"
+        val isFavourite = favesRepository.isFavourite(movie.id)
+        return MovieItem(
+            movie.id,
+            imageUrl,
+            movie.title,
+            movie.overview,
+            releaseDate,
+            isFavourite
+        )
     }
 
     private fun onSuccess(movies: List<MovieItem>) {
@@ -70,8 +69,35 @@ class MainFragmentPresenter(
         viewState.hideSearchProgress()
     }
 
-    fun onFavouriteClick(id: Int, isChecked: Boolean) = when (isChecked){
+    fun onFavouriteClick(id: Int, isChecked: Boolean) = when (isChecked) {
         true -> favesRepository.saveId(id)
         false -> favesRepository.removeId(id)
+    }
+
+    fun onRefresh(searchInput: String) {
+        viewState.hideSwipeRefresh()
+        if (searchInput.isNotEmpty()) {
+            onTextChanged(searchInput)
+        } else {
+            fetchMovieList()
+        }
+    }
+
+    fun onTextChanged(query: String) {
+        viewState.showSearchProgress()
+        compositeDisposable += moviesRepository.getSearchResult(query)
+            .flattenAsObservable { it }
+            .map { movie: Movie -> mapMovieToItem(movie) }
+            .toList()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(movieListSubscriber)
+    }
+
+    private val movieListSubscriber: BiConsumer<List<MovieItem>, Throwable> = BiConsumer { movies, error ->
+        when {
+            error != null -> onError(error)
+            else -> onSuccess(movies)
+        }
     }
 }
