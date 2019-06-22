@@ -9,6 +9,6 @@ interface MainView: MvpView {
     fun hideListProgress()
     fun showSearchProgress()
     fun hideSearchProgress()
-    fun hideSwipeRefresh()
+    fun hideSwipeRefreshProgress()
 
 }

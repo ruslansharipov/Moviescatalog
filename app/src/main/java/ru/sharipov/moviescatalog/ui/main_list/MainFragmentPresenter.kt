@@ -11,6 +11,7 @@ import moxy.InjectViewState
 import moxy.MvpPresenter
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.format.DateTimeParseException
 import ru.sharipov.moviescatalog.domain.MovieItem
 import ru.sharipov.moviescatalog.interaction.MoviesRepository
 import ru.sharipov.moviescatalog.interaction.favourites.FavesRepository
@@ -34,13 +35,18 @@ class MainFragmentPresenter(
         fetchMovieList()
     }
 
+    fun onError(t: Throwable) {
+        viewState.hideListProgress()
+        viewState.hideSearchProgress()
+    }
+
     fun onFavouriteClick(id: Int, isChecked: Boolean) = when (isChecked) {
         true -> favesRepository.saveId(id)
         false -> favesRepository.removeId(id)
     }
 
     fun onRefresh(query: String) {
-        viewState.hideSwipeRefresh()
+        viewState.hideSwipeRefreshProgress()
         onTextChanged(query)
     }
 
@@ -54,8 +60,7 @@ class MainFragmentPresenter(
 
     private val movieListSubscriber: BiConsumer<List<MovieItem>, Throwable> = BiConsumer { movies, error ->
         if (error != null) {
-            viewState.hideListProgress()
-            viewState.hideSearchProgress()
+            onError(error)
         } else {
             viewState.hideListProgress()
             viewState.hideSearchProgress()
@@ -77,7 +82,7 @@ class MainFragmentPresenter(
 
     private fun mapAndSubscribe(single: Single<List<Movie>>): Disposable {
         return single.flattenAsObservable { it }
-            .map { movie: Movie -> mapMovieToItem(movie) }
+            .map { movie: Movie -> this.mapMovieToItem(movie) }
             .toList()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -85,8 +90,7 @@ class MainFragmentPresenter(
     }
 
     private fun mapMovieToItem(movie: Movie): MovieItem {
-        val date = LocalDate.parse(movie.releaseDate, dateParser)
-        val releaseDate = date.format(dateFormatter)
+        val releaseDate = getReleaseDate(movie.releaseDate)
         val imageUrl = "$IMAGE_PREFIX${movie.posterPath}"
         val isFavourite = favesRepository.isFavourite(movie.id)
         return MovieItem(
@@ -97,5 +101,14 @@ class MainFragmentPresenter(
             releaseDate,
             isFavourite
         )
+    }
+
+    private fun getReleaseDate(responseDate: String): String {
+        return try {
+            val date = LocalDate.parse(responseDate, dateParser)
+            date.format(dateFormatter)
+        } catch (ex: DateTimeParseException) {
+            ""
+        }
     }
 }

@@ -1,17 +1,15 @@
 package ru.sharipov.moviescatalog.ui.main_list
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding3.widget.textChangeEvents
 import dagger.Lazy
-import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.plugins.RxJavaPlugins.onError
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
 import moxy.MvpAppCompatFragment
@@ -38,6 +36,7 @@ class MainFragment : MvpAppCompatFragment(), MainView {
     @ProvidePresenter
     fun providePresenter(): MainFragmentPresenter = daggerPresenter.get()
 
+    private val uiCompositeDisposable = CompositeDisposable()
     private val moviesAdapter = MoviesAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,16 +64,12 @@ class MainFragment : MvpAppCompatFragment(), MainView {
             addItemDecoration(decoration)
         }
 
-        search_et.addTextChangedListener(object : TextWatcher{
-            override fun afterTextChanged(s: Editable?) {}
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                presenter.onTextChanged(s.toString())
-            }
-
-        })
+        uiCompositeDisposable += search_et.textChangeEvents()
+            .skipInitialValue()
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .map { it.text.toString() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(presenter::onTextChanged, presenter::onError)
 
         swipe_rl.setOnRefreshListener { presenter.onRefresh(search_et.text.toString()) }
     }
@@ -91,7 +86,12 @@ class MainFragment : MvpAppCompatFragment(), MainView {
 
     override fun hideSearchProgress() = search_pb.hide()
 
-    override fun hideSwipeRefresh() {
+    override fun hideSwipeRefreshProgress() {
         swipe_rl.isRefreshing = false
+    }
+
+    override fun onDestroy() {
+        uiCompositeDisposable.clear()
+        super.onDestroy()
     }
 }
