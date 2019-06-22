@@ -13,13 +13,13 @@
         android:layout_height="40dp"
         android:layout_alignParentTop="true"
         android:layout_margin="8dp"
-        android:maxLines="1"
-        android:inputType="text"
         android:background="@drawable/fragment_main_search_background"
         android:drawableStart="@drawable/ic_search"
         android:drawablePadding="24dp"
         android:fontFamily="sans-serif"
         android:hint="@string/search_hint"
+        android:inputType="text"
+        android:maxLines="1"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:textColorHint="@color/colorTextHint"
@@ -28,7 +28,7 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_rl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/search_et">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -55,6 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/search_et"
+        android:indeterminate="true"
         android:visibility="gone"
         tools:visibility="visible" />
 
@@ -69,4 +70,39 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
+    <TextView
+        android:id="@+id/empty_state_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="56dp"
+        android:drawableTop="@drawable/ic_big_search"
+        android:drawablePadding="32dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="10sp"
+        android:textColor="@color/colorTextState"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        android:visibility="gone"
+        android:text="@string/empty_state_pattern"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/error_state_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="56dp"
+        android:drawableTop="@drawable/ic_alert_triangle"
+        android:drawablePadding="32dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="10sp"
+        android:text="@string/search_error_message"
+        android:textColor="#b4b4b4"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        android:visibility="gone"
+        tools:visibility="visible" />
 </RelativeLayout>

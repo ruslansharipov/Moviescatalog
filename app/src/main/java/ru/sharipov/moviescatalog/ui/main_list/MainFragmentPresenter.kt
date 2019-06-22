@@ -36,8 +36,7 @@ class MainFragmentPresenter(
     }
 
     fun onError(t: Throwable) {
-        viewState.hideListProgress()
-        viewState.hideSearchProgress()
+        viewState.onError()
     }
 
     fun onFavouriteClick(id: Int, isChecked: Boolean) = when (isChecked) {
@@ -59,23 +58,21 @@ class MainFragmentPresenter(
     }
 
     private val movieListSubscriber: BiConsumer<List<MovieItem>, Throwable> = BiConsumer { movies, error ->
-        if (error != null) {
-            onError(error)
-        } else {
-            viewState.hideListProgress()
-            viewState.hideSearchProgress()
-            viewState.showMovies(movies)
+        when{
+            error != null -> onError(error)
+            movies.isEmpty() -> viewState.onEmptyList()
+            else -> viewState.onListLoaded(movies)
         }
     }
 
     private fun fetchMovieList() {
-        viewState.showListProgress()
+        viewState.onListLoading()
         val movies = moviesRepository.getMovies()
         compositeDisposable += mapAndSubscribe(movies)
     }
 
     private fun fetchFilteredMovies(query: String) {
-        viewState.showSearchProgress()
+        viewState.onSearchLoading()
         val searchResult = moviesRepository.getSearchResult(query)
         compositeDisposable += mapAndSubscribe(searchResult)
     }

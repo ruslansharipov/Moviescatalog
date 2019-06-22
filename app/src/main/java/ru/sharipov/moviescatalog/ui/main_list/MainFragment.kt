@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding3.widget.textChangeEvents
+import com.redmadrobot.lib.sd.base.StateDelegate
 import dagger.Lazy
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -21,6 +22,7 @@ import ru.sharipov.moviescatalog.domain.MovieItem
 import ru.sharipov.moviescatalog.ui.hide
 import ru.sharipov.moviescatalog.ui.main_list.adapter.MoviesAdapter
 import ru.sharipov.moviescatalog.ui.main_list.adapter.SimpleDecoration
+import ru.sharipov.moviescatalog.ui.main_list.state.MovieState
 import ru.sharipov.moviescatalog.ui.show
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -73,19 +75,8 @@ class MainFragment : MvpAppCompatFragment(), MainView {
             .subscribe(presenter::onTextChanged, presenter::onError)
 
         swipe_rl.setOnRefreshListener { presenter.onRefresh(search_et.text.toString()) }
+        retry_fab.setOnClickListener { presenter.onRefresh(search_et.text.toString()) }
     }
-
-    override fun showMovies(movies: List<MovieItem>) {
-        moviesAdapter.movies = movies
-    }
-
-    override fun showListProgress() = list_pb.show()
-
-    override fun hideListProgress() = list_pb.hide()
-
-    override fun showSearchProgress() = search_pb.show()
-
-    override fun hideSearchProgress() = search_pb.hide()
 
     override fun hideSwipeRefreshProgress() {
         swipe_rl.isRefreshing = false
@@ -94,5 +85,54 @@ class MainFragment : MvpAppCompatFragment(), MainView {
     override fun onDestroy() {
         uiCompositeDisposable.clear()
         super.onDestroy()
+    }
+
+    override fun onListLoading(){
+        search_pb.hide()
+        movies_rv.hide()
+        retry_fab.hide()
+        empty_state_tv.hide()
+        error_state_tv.hide()
+        list_pb.show()
+    }
+
+    override fun onSearchLoading(){
+        list_pb.hide()
+        movies_rv.hide()
+        retry_fab.hide()
+        empty_state_tv.hide()
+        error_state_tv.hide()
+        search_pb.show()
+    }
+
+    override fun onEmptyList(){
+        list_pb.hide()
+        search_pb.hide()
+        movies_rv.hide()
+        retry_fab.hide()
+        error_state_tv.hide()
+        empty_state_tv.show()
+        empty_state_tv.text = getString(R.string.empty_state_pattern, search_et.text.toString())
+    }
+
+    override fun onError(){
+        list_pb.hide()
+        search_pb.hide()
+        movies_rv.hide()
+        empty_state_tv.hide()
+        error_state_tv.show()
+        retry_fab.show()
+    }
+
+    override fun onListLoaded(movies: List<MovieItem>){
+        moviesAdapter.movies = movies
+
+        list_pb.hide()
+        search_pb.hide()
+        empty_state_tv.hide()
+        error_state_tv.hide()
+        retry_fab.hide()
+
+        movies_rv.show()
     }
 }
