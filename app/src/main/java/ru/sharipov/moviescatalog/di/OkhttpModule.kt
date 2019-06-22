@@ -10,7 +10,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.sharipov.moviescatalog.BuildConfig
 import ru.sharipov.moviescatalog.interaction.network.MoviesApi
-import ru.sharipov.moviescatalog.interaction.network.TokenInterceptor
+import ru.sharipov.moviescatalog.interaction.network.RequestInterceptor
 
 @Module
 class OkhttpModule {
@@ -32,11 +32,11 @@ class OkhttpModule {
     @Provides
     fun provideOkhttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
-        tokenInterceptor: TokenInterceptor
+        requestInterceptor: RequestInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-            .addInterceptor(tokenInterceptor)
+            .addInterceptor(requestInterceptor)
             .build()
     }
 
@@ -52,7 +52,7 @@ class OkhttpModule {
     }
 
     @Provides
-    fun provideTokenInterceptor(): TokenInterceptor {
-        return TokenInterceptor()
+    fun provideTokenInterceptor(): RequestInterceptor {
+        return RequestInterceptor()
     }
 }
