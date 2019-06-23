@@ -5,6 +5,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiConsumer
+import io.reactivex.rxkotlin.Singles
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
@@ -13,14 +14,14 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.DateTimeParseException
 import ru.sharipov.moviescatalog.domain.MovieItem
-import ru.sharipov.moviescatalog.interaction.MoviesRepository
-import ru.sharipov.moviescatalog.interaction.favourites.FavesRepository
+import ru.sharipov.moviescatalog.interaction.repository.MoviesRepository
+import ru.sharipov.moviescatalog.interaction.repository.FavouritesRepository
 import ru.sharipov.moviescatalog.interaction.response.Movie
 
 @InjectViewState
 class MainFragmentPresenter(
     private val moviesRepository: MoviesRepository,
-    private val favesRepository: FavesRepository
+    private val favouritesRepository: FavouritesRepository
 ) : MvpPresenter<MainView>() {
 
     companion object {
@@ -39,12 +40,16 @@ class MainFragmentPresenter(
         viewState.onError()
     }
 
-    fun onFavouriteClick(id: Int, isChecked: Boolean) = when (isChecked) {
-        true -> favesRepository.saveId(id)
-        false -> favesRepository.removeId(id)
+    fun onFavouriteClick(id: Int, isChecked: Boolean) {
+        compositeDisposable += when (isChecked) {
+            true -> favouritesRepository.saveId(id)
+            false -> favouritesRepository.removeId(id)
+        }
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 
-    fun onItemClick(item: MovieItem){
+    fun onItemClick(item: MovieItem) {
         viewState.showToast(item.title)
     }
 
@@ -62,7 +67,7 @@ class MainFragmentPresenter(
     }
 
     private val movieListSubscriber: BiConsumer<List<MovieItem>, Throwable> = BiConsumer { movies, error ->
-        when{
+        when {
             error != null -> onError(error)
             movies.isEmpty() -> viewState.onEmptyList()
             else -> viewState.onListLoaded(movies)
@@ -83,17 +88,19 @@ class MainFragmentPresenter(
 
     private fun mapAndSubscribe(single: Single<List<Movie>>): Disposable {
         return single.flattenAsObservable { it }
-            .map { movie: Movie -> this.mapMovieToItem(movie) }
-            .toList()
+            .flatMapSingle { movie ->
+                Singles.zip(Single.just(movie), favouritesRepository.isFavourite(movie.id))
+            }.map { pair: Pair<Movie, Boolean> ->
+                mapMovieToItem(pair.first, pair.second)
+            }.toList()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(movieListSubscriber)
     }
 
-    private fun mapMovieToItem(movie: Movie): MovieItem {
+    private fun mapMovieToItem(movie: Movie, isFavourite: Boolean): MovieItem {
         val releaseDate = getReleaseDate(movie.releaseDate)
         val imageUrl = "$IMAGE_PREFIX${movie.posterPath}"
-        val isFavourite = favesRepository.isFavourite(movie.id)
         return MovieItem(
             movie.id,
             imageUrl,

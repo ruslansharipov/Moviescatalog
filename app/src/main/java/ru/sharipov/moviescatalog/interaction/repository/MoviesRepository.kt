@@ -1,4 +1,4 @@
-package ru.sharipov.moviescatalog.interaction
+package ru.sharipov.moviescatalog.interaction.repository
 
 import io.reactivex.Single
 import ru.sharipov.moviescatalog.interaction.network.MoviesApi
