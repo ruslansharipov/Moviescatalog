@@ -16,7 +16,7 @@ import org.threeten.bp.format.DateTimeParseException
 import ru.sharipov.moviescatalog.domain.MovieItem
 import ru.sharipov.moviescatalog.interaction.repository.MoviesRepository
 import ru.sharipov.moviescatalog.interaction.repository.FavouritesRepository
-import ru.sharipov.moviescatalog.interaction.response.Movie
+import ru.sharipov.moviescatalog.interaction.network.response.Movie
 
 @InjectViewState
 class MainFragmentPresenter(

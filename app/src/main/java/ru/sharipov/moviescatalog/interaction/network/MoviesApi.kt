@@ -3,8 +3,7 @@ package ru.sharipov.moviescatalog.interaction.network
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.sharipov.moviescatalog.interaction.response.Movie
-import ru.sharipov.moviescatalog.interaction.response.MovieResponse
+import ru.sharipov.moviescatalog.interaction.network.response.MovieResponse
 
 interface MoviesApi {
     companion object {

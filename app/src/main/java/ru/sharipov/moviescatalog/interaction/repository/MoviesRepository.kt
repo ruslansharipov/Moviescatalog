@@ -2,7 +2,7 @@ package ru.sharipov.moviescatalog.interaction.repository
 
 import io.reactivex.Single
 import ru.sharipov.moviescatalog.interaction.network.MoviesApi
-import ru.sharipov.moviescatalog.interaction.response.Movie
+import ru.sharipov.moviescatalog.interaction.network.response.Movie
 
 class MoviesRepository(private val moviesApi: MoviesApi) {
     fun getMovies(): Single<List<Movie>> {
