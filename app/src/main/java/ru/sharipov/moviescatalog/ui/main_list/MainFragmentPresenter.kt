@@ -44,6 +44,10 @@ class MainFragmentPresenter(
         false -> favesRepository.removeId(id)
     }
 
+    fun onItemClick(item: MovieItem){
+        viewState.showToast(item.title)
+    }
+
     fun onRefresh(query: String) {
         viewState.hideSwipeRefreshProgress()
         onTextChanged(query)

@@ -3,4 +3,5 @@
     <string name="search_hint">Поиск по названию фильма</string>
     <string name="search_error_message">Нам не удалось обработать ваш запрос. Попробуйте еще раз</string>
     <string name="empty_state_pattern">По запросу “%s” ничего не найдено</string>
+    <string name="snack_check_connection_message">Проверьте соединение с интернетом и попробуйте еще раз</string>
 </resources>

@@ -10,4 +10,5 @@ interface MainView: MvpView {
     fun onError()
     fun onListLoaded(movies: List<MovieItem>)
     fun hideSwipeRefreshProgress()
+    fun showToast(message: String)
 }

@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.widget.textChangeEvents
 import com.redmadrobot.lib.sd.base.State
 import com.redmadrobot.lib.sd.base.StateDelegate
@@ -27,6 +29,10 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainFragment : MvpAppCompatFragment(), MainView {
+
+    companion object {
+        private val DEBOUNCE_MS = 300L
+    }
 
     @Inject
     lateinit var daggerPresenter: Lazy<MainFragmentPresenter>
@@ -68,7 +74,10 @@ class MainFragment : MvpAppCompatFragment(), MainView {
         val small = resources.getDimensionPixelSize(R.dimen.fragment_main_padding_small)
         val big = resources.getDimensionPixelSize(R.dimen.fragment_main_padding_big)
         val decoration = SimpleDecoration(small, inner, big)
-        moviesAdapter.favouritesListener = presenter::onFavouriteClick
+        moviesAdapter.run {
+            favouritesListener = presenter::onFavouriteClick
+            clickListener = presenter::onItemClick
+        }
         movies_rv.run {
             adapter = moviesAdapter
             layoutManager = LinearLayoutManager(context)
@@ -78,17 +87,13 @@ class MainFragment : MvpAppCompatFragment(), MainView {
         uiCompositeDisposable += search_et.textChangeEvents()
             .skipInitialValue()
             .skip(1)
-            .debounce(300, TimeUnit.MILLISECONDS)
+            .debounce(DEBOUNCE_MS, TimeUnit.MILLISECONDS)
             .map { it.text.toString() }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(presenter::onTextChanged, presenter::onError)
 
         swipe_rl.setOnRefreshListener { presenter.onRefresh(search_et.text.toString()) }
         retry_fab.setOnClickListener { presenter.onRefresh(search_et.text.toString()) }
-    }
-
-    override fun hideSwipeRefreshProgress() {
-        swipe_rl.isRefreshing = false
     }
 
     override fun onDestroy() {
@@ -111,10 +116,27 @@ class MainFragment : MvpAppCompatFragment(), MainView {
 
     override fun onError() {
         stateDelegate.currentState = MovieState.ERROR
+        view?.let { nonNullView ->
+            Snackbar.make(
+                nonNullView,
+                R.string.snack_check_connection_message,
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
     }
 
     override fun onListLoaded(movies: List<MovieItem>) {
         moviesAdapter.movies = movies
         stateDelegate.currentState = MovieState.LIST_LOADED
     }
+
+    override fun hideSwipeRefreshProgress() {
+        swipe_rl.isRefreshing = false
+    }
+
+    override fun showToast(message: String) = Toast.makeText(
+        context,
+        message,
+        Toast.LENGTH_LONG
+    ).show()
 }
