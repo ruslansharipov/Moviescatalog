@@ -15,4 +15,7 @@ interface MainView: MvpView {
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showToast(message: String)
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showErrorSnack()
 }

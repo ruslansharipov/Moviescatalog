@@ -38,6 +38,7 @@ class MainFragmentPresenter(
 
     fun onError(t: Throwable) {
         viewState.onError()
+        viewState.showErrorSnack()
     }
 
     fun onFavouriteClick(id: Int, isChecked: Boolean) {

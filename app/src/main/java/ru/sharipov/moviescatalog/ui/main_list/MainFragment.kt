@@ -116,6 +116,9 @@ class MainFragment : MvpAppCompatFragment(), MainView {
 
     override fun onError() {
         stateDelegate.currentState = MovieState.ERROR
+    }
+
+    override fun showErrorSnack() {
         view?.let { nonNullView ->
             Snackbar.make(
                 nonNullView,
