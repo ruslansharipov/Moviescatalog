@@ -64,7 +64,7 @@ class MainFragment : MvpAppCompatFragment(), MainView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(view) {
         stateDelegate = StateDelegate(
             State(MovieState.LOADING_LIST, listOf(list_pb)),
-            State(MovieState.LOADING_SEARCH, listOf(search_pb)),
+            State(MovieState.LOADING_SEARCH, listOf(search_pb, movies_rv)),
             State(MovieState.EMPTY_LIST, listOf(empty_state_tv)),
             State(MovieState.ERROR, listOf(error_state_tv, retry_fab)),
             State(MovieState.LIST_LOADED, listOf(movies_rv))
