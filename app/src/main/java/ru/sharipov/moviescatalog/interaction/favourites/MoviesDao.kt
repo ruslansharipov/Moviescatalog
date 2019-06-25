@@ -7,7 +7,7 @@ import io.reactivex.Single
 @Dao
 interface MoviesDao {
 
-    @Query("SELECT count(id) FROM favourite WHERE id = :id")
+    @Query("SELECT count(id) FROM favourite WHERE id = :id LIMIT 1")
     fun getCount(id: Int): Single<Int>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
