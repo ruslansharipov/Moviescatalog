@@ -1,4 +1,4 @@
-package ru.sharipov.moviescatalog.interaction.network.response
+package ru.sharipov.moviescatalog.data.network.response
 
 import com.google.gson.annotations.SerializedName
 

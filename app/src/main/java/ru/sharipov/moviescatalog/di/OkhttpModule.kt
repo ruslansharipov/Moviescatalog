@@ -9,8 +9,8 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.sharipov.moviescatalog.BuildConfig
-import ru.sharipov.moviescatalog.interaction.network.MoviesApi
-import ru.sharipov.moviescatalog.interaction.network.RequestInterceptor
+import ru.sharipov.moviescatalog.data.network.MoviesApi
+import ru.sharipov.moviescatalog.data.network.RequestInterceptor
 
 @Module
 class OkhttpModule {

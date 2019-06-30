@@ -1,4 +1,4 @@
-package ru.sharipov.moviescatalog.interaction.favourites
+package ru.sharipov.moviescatalog.data.favourites_datasource
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

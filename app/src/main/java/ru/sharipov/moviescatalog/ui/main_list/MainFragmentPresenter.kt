@@ -14,14 +14,14 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.DateTimeParseException
 import ru.sharipov.moviescatalog.domain.MovieItem
-import ru.sharipov.moviescatalog.interaction.repository.MoviesRepository
-import ru.sharipov.moviescatalog.interaction.repository.FavouritesRepository
-import ru.sharipov.moviescatalog.interaction.network.response.Movie
+import ru.sharipov.moviescatalog.data.network.response.Movie
+import ru.sharipov.moviescatalog.domain.IFavouritesRepository
+import ru.sharipov.moviescatalog.domain.IMoviesRepository
 
 @InjectViewState
 class MainFragmentPresenter(
-    private val moviesRepository: MoviesRepository,
-    private val favouritesRepository: FavouritesRepository
+    private val moviesRepository: IMoviesRepository,
+    private val favouritesRepository: IFavouritesRepository
 ) : MvpPresenter<MainView>() {
 
     companion object {

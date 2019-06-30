@@ -4,7 +4,7 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-class SimpleDecoration(
+class MovieDecoration(
     private val small: Int,
     private val inner: Int,
     private val big: Int

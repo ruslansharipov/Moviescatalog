@@ -5,22 +5,24 @@ import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
-import ru.sharipov.moviescatalog.interaction.favourites.FavouriteDatabase
-import ru.sharipov.moviescatalog.interaction.favourites.MoviesDao
-import ru.sharipov.moviescatalog.interaction.repository.MoviesRepository
-import ru.sharipov.moviescatalog.interaction.network.MoviesApi
-import ru.sharipov.moviescatalog.interaction.repository.FavouritesRepository
+import ru.sharipov.moviescatalog.data.favourites_datasource.FavouriteDatabase
+import ru.sharipov.moviescatalog.data.favourites_datasource.MoviesDao
+import ru.sharipov.moviescatalog.data.repository.MoviesRepository
+import ru.sharipov.moviescatalog.data.network.MoviesApi
+import ru.sharipov.moviescatalog.data.repository.FavouritesRepository
+import ru.sharipov.moviescatalog.domain.IFavouritesRepository
+import ru.sharipov.moviescatalog.domain.IMoviesRepository
 import javax.inject.Singleton
 
 @Module
-class InteractionModule {
+class DataModule {
 
     companion object {
         private const val FAVOURITES = "favourites.db"
     }
 
     @Provides
-    fun provideFaveRepository(moviesDao: MoviesDao): FavouritesRepository {
+    fun provideFaveRepository(moviesDao: MoviesDao): IFavouritesRepository {
         return FavouritesRepository(moviesDao)
     }
 
@@ -45,7 +47,7 @@ class InteractionModule {
     }
 
     @Provides
-    fun provideMoviesRepository(moviesApi: MoviesApi): MoviesRepository {
+    fun provideMoviesRepository(moviesApi: MoviesApi): IMoviesRepository {
         return MoviesRepository(moviesApi)
     }
 }

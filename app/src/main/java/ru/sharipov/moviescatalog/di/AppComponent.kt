@@ -9,7 +9,7 @@ import javax.inject.Singleton
     modules = [
         ApplicationModule::class,
         OkhttpModule::class,
-        InteractionModule::class,
+        DataModule::class,
         PresentationModule::class
     ]
 )

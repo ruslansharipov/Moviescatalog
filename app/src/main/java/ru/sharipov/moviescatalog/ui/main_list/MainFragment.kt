@@ -23,7 +23,7 @@ import ru.sharipov.moviescatalog.R
 import ru.sharipov.moviescatalog.app.MoviesApp
 import ru.sharipov.moviescatalog.domain.MovieItem
 import ru.sharipov.moviescatalog.ui.main_list.adapter.MoviesAdapter
-import ru.sharipov.moviescatalog.ui.main_list.adapter.SimpleDecoration
+import ru.sharipov.moviescatalog.ui.main_list.adapter.MovieDecoration
 import ru.sharipov.moviescatalog.ui.main_list.state.MovieState
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -73,7 +73,7 @@ class MainFragment : MvpAppCompatFragment(), MainView {
         val inner = resources.getDimensionPixelSize(R.dimen.fragment_main_padding_inner)
         val small = resources.getDimensionPixelSize(R.dimen.fragment_main_padding_small)
         val big = resources.getDimensionPixelSize(R.dimen.fragment_main_padding_big)
-        val decoration = SimpleDecoration(small, inner, big)
+        val decoration = MovieDecoration(small, inner, big)
         moviesAdapter.run {
             favouritesListener = presenter::onFavouriteClick
             clickListener = presenter::onItemClick

@@ -1,4 +1,4 @@
-package ru.sharipov.moviescatalog.interaction.network
+package ru.sharipov.moviescatalog.data.network
 
 import okhttp3.Interceptor
 import okhttp3.Response

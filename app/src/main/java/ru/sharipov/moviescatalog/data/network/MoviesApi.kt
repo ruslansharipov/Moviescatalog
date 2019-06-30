@@ -1,9 +1,9 @@
-package ru.sharipov.moviescatalog.interaction.network
+package ru.sharipov.moviescatalog.data.network
 
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.sharipov.moviescatalog.interaction.network.response.MovieResponse
+import ru.sharipov.moviescatalog.data.network.response.MovieResponse
 
 interface MoviesApi {
     companion object {
